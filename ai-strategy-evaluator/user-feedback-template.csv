@@ -1,0 +1,9 @@
+session_id,timestamp,mode,verdict,feedback_rating,surfaced_new,risk_factor_useful,would_share,improvement_text
+a1b2c3d4,2026-03-12T14:30:00Z,augmented,pursue,positive,yes,useful,yes_as_is,"Love the sub-task breakdown"
+e5f6g7h8,2026-03-12T15:45:00Z,native,pass,positive,yes,useful,yes_with_edits,"Risk factor was spot-on but I'd reword for my audience"
+i9j0k1l2,2026-03-12T16:20:00Z,augmented,pursue-with-conditions,negative,no,too_generic,"Risk factor felt like it could apply to any AI feature"
+m3n4o5p6,2026-03-12T17:00:00Z,native,pursue,positive,yes,useful,yes_as_is,""
+q7r8s9t0,2026-03-13T09:15:00Z,augmented,pass,positive,not_sure,useful,no,"Great analysis but my stakeholders want a different format"
+u1v2w3x4,2026-03-13T10:30:00Z,native,pursue-with-conditions,negative,yes,not_useful,"Moat assessment was too surface-level for our complex use case"
+y5z6a7b8,2026-03-13T11:45:00Z,augmented,pursue,positive,yes,useful,yes_as_is,"This saved me 2 hours of framework thinking"
+c9d0e1f2,2026-03-13T14:00:00Z,augmented,pursue,positive,yes,useful,yes_with_edits,"Would love more specific competitor examples in moat section"

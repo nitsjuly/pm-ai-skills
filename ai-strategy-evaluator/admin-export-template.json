@@ -1,0 +1,66 @@
+{
+  "session_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "timestamp": "2026-03-13T14:30:00.000Z",
+  "user_id": "user_abc123",
+  
+  "inputs": {
+    "userTask": "Procurement managers who cross-reference three spreadsheets every Monday to flag late purchase orders before the weekly planning meeting",
+    "currentSolution": "Excel + email chains. Takes 2–3 hours, misses things, no real-time view. Manager has to manually ping 4 different people to get status updates.",
+    "successState": "Walk into Monday's planning meeting already knowing which POs need intervention — no prep work. Automated alerts when a PO is likely to be late based on vendor patterns.",
+    "constraints": "Enterprise customers, SAP integration required, strong compliance environment. Data cannot leave EU region.",
+    "mode": "augmented"
+  },
+  
+  "prompt": "You are an AI Product Strategy evaluator. Analyze this AI use case.\n\nContext:\n- User & Task: Procurement managers who cross-reference three spreadsheets every Monday...\n- Mode: AI-Augmented\n\nKey risks to check: step count, persona split, trust gap, compliance surface, action gap.\nIf most sub-tasks are deterministic, recommend removing AI entirely.\nKill factor must be specific. If fixable, say how.\n\nRespond ONLY with valid JSON...",
+  
+  "rawResponse": "{\"functionalJob\":\"Walk into Monday's planning call knowing which purchase orders need intervention, without manual spreadsheet cross-referencing\",\"emotionalJob\":\"Confidently lead the planning meeting as the person who always has the answer\",\"subtasks\":[{\"task\":\"Pull PO status from SAP\",\"type\":\"deterministic\",\"why\":\"API integration, structured data — no AI needed\"},{\"task\":\"Detect orders likely to be late\",\"type\":\"deterministic\",\"why\":\"Date math, rule-based comparison\"},{\"task\":\"Summarize flagged POs for meeting\",\"type\":\"ai-large\",\"why\":\"NLP summarization of unstructured vendor notes\"},{\"task\":\"Notify team of risks\",\"type\":\"deterministic\",\"why\":\"Email/Slack automation\"}],\"risks\":[{\"title\":\"Action gap\",\"description\":\"Procurement flags the issue but can't force vendor compliance — requires escalation to sourcing team.\"},{\"title\":\"Trust gap\",\"description\":\"Users won't skip manual verification until AI proves accurate over 4–6 weeks.\"}],\"moat\":{\"data\":\"moderate\",\"workflow\":\"strong\",\"governance\":\"moderate\",\"summary\":\"Workflow moat is real if SAP integration becomes the switching cost.\"},\"buildBuyIntegrate\":{\"recommendation\":\"build\",\"rationale\":\"SAP integration + EU compliance make off-the-shelf unlikely. Moat is in workflow embedding.\"},\"riskFactor\":{\"insight\":\"IT deprioritizes SAP integration because procurement isn't revenue-generating. Feature never gets past pilot.\",\"fixable\":true,\"howToFix\":\"Secure IT commitment in writing before dev starts.\"},\"bottomLine\":{\"verdict\":\"pursue-with-conditions\",\"condition\":\"Only if IT commits to SAP integration timeline before sprint planning.\"},\"nextStep\":\"Show mock AI summary to 5 procurement managers next week. Observe if they'd trust it without checking.\"}",
+  
+  "evaluation": {
+    "functionalJob": "Walk into Monday's planning call knowing which purchase orders need intervention, without manual spreadsheet cross-referencing",
+    "emotionalJob": "Confidently lead the planning meeting as the person who always has the answer, not the one scrambling for data",
+    "subtasks": [
+      {"task": "Pull PO status from SAP", "type": "deterministic", "why": "API integration, structured data — no AI needed"},
+      {"task": "Detect orders likely to be late", "type": "deterministic", "why": "Date math, rule-based comparison"},
+      {"task": "Summarize flagged POs for meeting", "type": "ai-large", "why": "NLP summarization of unstructured vendor notes"},
+      {"task": "Notify team of risks", "type": "deterministic", "why": "Email/Slack automation"}
+    ],
+    "risks": [
+      {"title": "Action gap", "description": "Procurement flags the issue but can't force vendor compliance — requires escalation to sourcing team who may not act."},
+      {"title": "Trust gap", "description": "Users won't skip manual verification until AI proves accurate over 4–6 weeks. During this period, it's additive work."}
+    ],
+    "moat": {
+      "data": "moderate",
+      "workflow": "strong",
+      "governance": "moderate",
+      "summary": "Workflow moat is real if SAP integration becomes the switching cost. Data moat builds slowly as vendor patterns accumulate."
+    },
+    "buildBuyIntegrate": {
+      "recommendation": "build",
+      "rationale": "SAP integration and EU compliance requirements make off-the-shelf solutions unlikely. Moat is in workflow embedding."
+    },
+    "riskFactor": {
+      "insight": "IT deprioritizes SAP integration because procurement isn't revenue-generating. Feature never gets past pilot because the data pipe doesn't exist.",
+      "fixable": true,
+      "howToFix": "Secure IT commitment in writing before dev starts. If unavailable, pass."
+    },
+    "bottomLine": {
+      "verdict": "pursue-with-conditions",
+      "condition": "Only if IT commits to SAP integration timeline before sprint planning."
+    },
+    "nextStep": "Show mock AI summary (generated manually from last week's data) to 5 procurement managers. Observe if they'd trust it without checking."
+  },
+  
+  "tokenUsage": {
+    "inputTokens": 680,
+    "outputTokens": 920,
+    "costUsd": 0.0158
+  },
+  
+  "feedback": {
+    "rating": "positive",
+    "surfacedNew": "yes",
+    "riskFactorUseful": "useful",
+    "wouldShare": "yes_as_is",
+    "notes": "The action gap insight was exactly what we'd been missing. Sent this directly to our PM lead."
+  }
+}
