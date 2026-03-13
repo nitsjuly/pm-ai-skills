@@ -105,7 +105,7 @@ Choose based on your comfort level and data sensitivity:
 #### Step 1: Fork the Repository
 ```bash
 # Fork on GitHub, then clone
-git clone https://github.com/YOUR-USERNAME/ai-pm-skills.git
+git clone https://nitsjuly/ai-pm-skills.git
 cd ai-pm-skills
 ```
 
@@ -118,7 +118,7 @@ cd ai-pm-skills
 #### Step 3: Get Anthropic API Key
 1. Go to [console.anthropic.com](https://console.anthropic.com)
 2. Create new API key
-3. Set spending limit (recommend $25-50/month to start)
+3. Set spending limit (recommend $25-50/month to start and test)
 
 #### Step 4: Deploy to Lovable (or Your Preferred Platform)
 1. Go to [lovable.dev](https://lovable.dev)
@@ -258,7 +258,7 @@ Yes! Fork the repo, edit SKILL.md, deploy your own version.
 
 | Resource | URL |
 |---|---|
-| Hosted App | `[lovable-app-url]` |
+| Hosted App | `https://ai-pm-partner.lovable.app'|
 | GitHub Repo | `github.com/nithyach/ai-pm-skills` |
 | SKILL.md (raw) | `github.com/nithyach/ai-pm-skills/ai-strategy-evaluator/SKILL.md` |
 | Author LinkedIn | `linkedin.com/in/nithyach` |

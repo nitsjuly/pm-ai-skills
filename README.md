@@ -58,7 +58,7 @@ These skills encode product judgment into prompts — so you get consistent, rig
 |---|---|
 | [Getting Started](./GETTING-STARTED.md) | Setup options (hosted, Claude Project, self-host) |
 | [Test Cases](./examples/test-cases.md) | Example scenarios to try |
-| [Leadership Brief](./docs/PM-LEADERSHIP-BRIEF.md) | Pitch deck for PM leadership conversations |
+
 
 ---
 
@@ -78,15 +78,17 @@ These skills encode product judgment into prompts — so you get consistent, rig
 
 ## Usage
 
-### In Claude Projects (Recommended)
+
+
+### Via Hosted App (Recommended for alpha testing)
+1. Go to: `https://ai-pm-partner.lovable.app`
+2. Provide Access Key
+3. Describe use case → Run Evaluation
+
+### In Claude Projects 
 1. Create a new Project in Claude
 2. Add `ai-strategy-evaluator/SKILL.md` to your Project
 3. Paste your use case — Claude follows the framework
-
-### Via Hosted App
-1. Go to: `[app-url]`
-2. Magic link login
-3. Describe use case → Run Evaluation
 
 ### Fork for Enterprise
 See [Getting Started](./GETTING-STARTED.md) for self-hosting instructions.

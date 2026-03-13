@@ -12,7 +12,7 @@ Build an **AI Strategy Evaluator** — a web app that helps Product Managers eva
 
 **Core requirements:**
 - User authentication (magic link email)
-- Multi-step evaluation wizard (evaluates BOTH AI-Augmented and AI-Native, recommends phased approach)
+- Multi-step evaluation wizard (automatically determines Phase 1 mode from the use case — never asks the user to choose between AI-Augmented and AI-Native)
 - Claude API integration with $20 budget cap
 - Anti-hallucination: uses `[X]` brackets for unknown metrics
 - Reality Check callouts for optimism bias
@@ -391,8 +391,8 @@ function buildEvaluationPrompt(userTask, currentSolution, successState, constrai
 ## CRITICAL RULES — ANTI-HALLUCINATION
 
 1. **Zero-Guessing Policy:** Do NOT invent specific metrics (SKU counts, team sizes, timelines, dollar amounts) unless provided.
-2. **Bracket Notation:** Use [X] or [confirm: assumption] for data the PM must validate.
-3. **Ranges Over Specifics:** Say "typical enterprise scope: 3-6 months" not "14 weeks with 3 engineers."
+2. **Bracket Notation:** Use [X] or [confirm: assumption] for ALL estimates — including ranges. Ranges are also invented. Write [X] weeks/months and describe complexity factors instead.
+3. **No Ranges:** Do NOT write "3-6 months" or "2-3 engineers." That is still an invented number. Use [X] and explain what drives scope.
 4. **Regulatory Hedging:** Don't cite specific law sections unless certain. Use "current [X] requirements."
 
 ## FORMATTING RULES
@@ -411,11 +411,14 @@ function buildEvaluationPrompt(userTask, currentSolution, successState, constrai
 
 ## EVALUATION APPROACH
 
-Evaluate through BOTH lenses and recommend a PHASED approach:
-- **Phase 1 (Time-to-Value):** Usually AI-Augmented — ship fast, prove value, build trust
-- **Phase 2 (Workflow Transformation):** AI-Native — rethink the workflow once trust is earned
+Evaluate through BOTH lenses and recommend a PHASED approach. Do NOT default to AI-Augmented for Phase 1 — derive the right mode from the use case analysis.
 
-Not every use case has a meaningful Phase 2. Be honest when augmentation is the end state.
+- **AI-Augmented fits Phase 1 when:** the existing workflow is sound but slow, users need to stay in control, or trust must be earned before behavior change is possible.
+- **AI-Native fits Phase 1 when:** the existing workflow is fundamentally broken (not just slow), there is no legacy behavior worth preserving, or an augmented version would be so limited it fails to prove real value.
+
+Phase 1 should be whichever mode delivers *meaningful* value fastest — not whichever is safer by default.
+
+Phase 2 describes the next evolution once Phase 1 trust is established. Not every use case has a meaningful Phase 2. Be honest when the current approach is the end state.
 
 ## OUTPUT
 
@@ -445,7 +448,7 @@ Respond ONLY with valid JSON matching this schema:
   "buildBuyIntegrate": {
     "recommendation": "build|buy|integrate|none",
     "rationale": "string",
-    "effortEstimate": "string (use ranges, not specifics)"
+    "effortEstimate": "string (use [X] for all time/cost estimates — list complexity factors, do not invent ranges)"
   },
   "riskFactor": {
     "insight": "string (specific, uncomfortable, names personas/blockers)",
@@ -456,7 +459,7 @@ Respond ONLY with valid JSON matching this schema:
     "phase1": {
       "mode": "augmented|native",
       "whatItLooksLike": ["bullet 1", "bullet 2", "bullet 3"],
-      "timeToValue": "string (range)",
+      "timeToValue": "string (use [X] — list what drives the timeline, do not invent a range)",
       "successTrigger": "string"
     },
     "phase2": {
