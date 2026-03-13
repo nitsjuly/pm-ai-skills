@@ -20,7 +20,7 @@ These skills encode product judgment into prompts — so you get consistent, rig
 
 ## Skills
 
-### 🎯 AI Strategy Evaluator (v2.5)
+### 🎯 AI Strategy Evaluator (v1)
 **Use when:** Deciding whether to build an AI feature, assessing moat/adoption risk, or choosing build vs. buy vs. integrate.
 
 **What it does:**
