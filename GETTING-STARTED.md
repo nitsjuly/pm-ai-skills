@@ -36,12 +36,12 @@ Choose based on your comfort level and data sensitivity:
 - You're okay with data stored in a shared database
 
 ### How to Start
-1. Go to: `[lovable-app-url]`
-2. Enter email → click magic link
+1. Go to: '(https://ai-pm-partner.lovable.app/)`
+2. Enter access code
 3. Describe your use case → Run Evaluation
 
 ### Limitations
-- Shared API budget (may hit cap during high usage)
+- Need access token to use pre-built app
 - Data stored in shared Supabase instance
 - No customization
 
@@ -87,12 +87,13 @@ Choose based on your comfort level and data sensitivity:
 
 ---
 
-## Option C: Fork & Self-Host (Full Privacy)
+## Option C: Fork & Self-Host (Full Privacy) 
 
 ### When to Use
 - Enterprise environment with sensitive use cases
 - You need audit logs and data residency control
 - You want to customize the skill for your team
+- Instructions for this are AI generated. Please reach out if you have any issues
 
 ### What You'll Need
 - GitHub account
