@@ -36,8 +36,8 @@ Choose based on your comfort level and data sensitivity:
 - You're okay with data stored in a shared database
 
 ### How to Start
-1. Go to: '(https://ai-pm-partner.lovable.app/)`
-2. Enter access code
+1. Go to: https://ai-pm-partner.lovable.app/
+2. Enter access code (Email for access)
 3. Describe your use case → Run Evaluation
 
 ### Limitations
