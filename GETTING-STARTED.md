@@ -225,6 +225,8 @@ adopters, competitors already have AI features.
 Open an issue: `github.com/nithyach/ai-pm-skills/issues`
 
 ### Want to Improve the Framework?
+I built this as a tool that i wished my team had when we started down this road. It overlays specific context, structured thinking and frameworks and leverages Claude models to provide a structured, grounded "thinking partner". 
+
 PRs welcome! Areas of interest:
 - Industry-specific examples
 - Additional risk categories
@@ -259,7 +261,7 @@ Yes! Fork the repo, edit SKILL.md, deploy your own version.
 
 | Resource | URL |
 |---|---|
-| Hosted App | `https://ai-pm-partner.lovable.app'|
+| Hosted App | https://ai-pm-partner.lovable.app | DM me for Access
 | GitHub Repo | `github.com/nithyach/ai-pm-skills` |
 | SKILL.md (raw) | `github.com/nithyach/ai-pm-skills/ai-strategy-evaluator/SKILL.md` |
 | Author LinkedIn | `linkedin.com/in/nithyach` |
