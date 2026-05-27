@@ -12,7 +12,7 @@ These skills encode product judgment into prompts — so you get consistent, rig
 
 | Option | Best For | Setup |
 |---|---|---|
-| **Hosted App** | Try it now | [Launch App →](https://your-app-url) |
+| **Hosted App** | Try it now | [Launch App →](https://ai-pm-partner.lovable.app) (access-gated) |
 | **Claude Project** | Regular use | [Getting Started Guide](./GETTING-STARTED.md) |
 | **Fork & Self-Host** | Enterprise / Privacy | [Getting Started Guide](./GETTING-STARTED.md) |
 
