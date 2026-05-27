@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Strategy Evaluator</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #FEFDFB;
+      --bg-secondary: #F9F8F6;
+      --bg-card: #FFFFFF;
+      --bg-elevated: #F3F2EF;
+      --border: #E8E6E1;
+      --border-focus: #D4D1C9;
+      --text-primary: #1C1917;
+      --text-secondary: #57534E;
+      --text-muted: #A8A29E;
+      --accent: #7C3AED;
+      --accent-soft: #EDE9FE;
+      --accent-glow: rgba(124, 58, 237, 0.15);
+      --success: #059669;
+      --success-soft: #D1FAE5;
+      --warning: #D97706;
+      --warning-soft: #FEF3C7;
+      --danger: #DC2626;
+      --danger-soft: #FEE2E2;
+      --gradient-1: linear-gradient(135deg, #7C3AED 0%, #A855F7 50%, #EC4899 100%);
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 3rem 0 2rem;
+      position: relative;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--gradient-1);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .logo-text {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header h1 {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .header p { color: var(--text-secondary); font-size: 1rem; max-width: 600px; margin: 0 auto; }
+    .credit { margin-top: 1rem; font-size: 0.875rem; color: var(--text-muted); }
+    .credit a { color: var(--accent); text-decoration: none; }
+    .credit a:hover { text-decoration: underline; }
+
+    /* Info Expander */
+    .info-expander {
+      max-width: 800px;
+      margin: 0 auto 2rem;
+    }
+
+    .info-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      transition: all 0.2s;
+      width: 100%;
+      text-align: left;
+    }
+
+    .info-toggle:hover {
+      background: var(--bg-elevated);
+      border-color: var(--border-focus);
+    }
+
+    .info-toggle-icon {
+      transition: transform 0.2s;
+    }
+
+    .info-toggle.open .info-toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .info-content {
+      display: none;
+      margin-top: 0.75rem;
+      padding: 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .info-content.open {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+
+    .comparison-table th {
+      text-align: left;
+      padding: 0.75rem;
+      background: var(--bg-secondary);
+      font-weight: 600;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .comparison-table td {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .info-footer {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .info-footer strong {
+      color: var(--text-primary);
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .tab {
+      padding: 0.75rem 1.25rem;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 8px 8px 0 0;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .tab:hover { color: var(--text-primary); background: var(--bg-secondary); }
+    .tab.active { color: var(--accent); background: var(--bg-card); box-shadow: var(--shadow-sm); }
+
+    .tab-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      background: var(--accent-soft);
+      border-radius: 10px;
+      font-size: 0.75rem;
+      margin-left: 0.5rem;
+      color: var(--accent);
+    }
+
+    /* Progress */
+    .progress-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .progress-dot {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-sm);
+      color: var(--text-muted);
+    }
+
+    .progress-dot.active { 
+      background: var(--accent); 
+      border-color: var(--accent); 
+      color: white;
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+    .progress-dot.completed { 
+      background: var(--success); 
+      border-color: var(--success); 
+      color: white;
+    }
+
+    .progress-line {
+      width: 80px;
+      height: 2px;
+      background: var(--border);
+      transition: background 0.3s ease;
+    }
+
+    .progress-line.completed { background: var(--success); }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--accent-soft);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 1.25rem;
+    }
+
+    .card-title {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 1.375rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      color: var(--text-primary);
+    }
+
+    .card-subtitle { color: var(--text-secondary); font-size: 0.9rem; }
+
+    /* Forms */
+    .form-group { margin-bottom: 1.5rem; }
+    label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary); }
+    .label-hint { font-weight: 400; color: var(--text-muted); font-size: 0.875rem; margin-top: 0.25rem; }
+
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 1rem;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+
+    input[type="text"]:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+      background: var(--bg-card);
+    }
+
+    textarea { resize: vertical; min-height: 100px; }
+    ::placeholder { color: var(--text-muted); }
+
+    /* Mode Selector */
+    .mode-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+
+    .mode-card {
+      background: var(--bg-card);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .mode-card:hover { 
+      border-color: var(--border-focus); 
+      transform: translateY(-2px); 
+      box-shadow: var(--shadow-md);
+    }
+    .mode-card.selected { 
+      border-color: var(--accent); 
+      background: var(--accent-soft);
+    }
+    .mode-card input { position: absolute; opacity: 0; }
+
+    .mode-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background: var(--accent-soft);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+
+    .mode-card h3 { 
+      font-family: 'Fraunces', Georgia, serif; 
+      font-size: 1.125rem; 
+      margin-bottom: 0.5rem; 
+      color: var(--text-primary);
+    }
+    .mode-card p { color: var(--text-secondary); font-size: 0.875rem; line-height: 1.5; }
+
+    .mode-example {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.875rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .btn-primary { 
+      background: var(--gradient-1); 
+      color: white;
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-primary:hover { 
+      transform: translateY(-2px); 
+      box-shadow: 0 8px 24px var(--accent-glow); 
+    }
+    .btn-secondary { 
+      background: var(--bg-card); 
+      color: var(--text-primary); 
+      border: 1px solid var(--border); 
+    }
+    .btn-secondary:hover { 
+      border-color: var(--border-focus); 
+      background: var(--bg-secondary);
+    }
+    .btn-success { background: var(--success); color: white; }
+    .btn-danger { 
+      background: var(--danger-soft); 
+      color: var(--danger); 
+      border: 1px solid var(--danger); 
+    }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-sm { padding: 0.5rem 1rem; font-size: 0.875rem; }
+
+    .btn-group { display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap; }
+
+    /* Results */
+    .results-container { display: none; }
+    .results-container.active { display: block; animation: fadeIn 0.5s ease; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-section { margin-bottom: 2rem; }
+
+    .result-section h3 {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--text-primary);
+    }
+
+    .section-number {
+      width: 28px;
+      height: 28px;
+      background: var(--accent-soft);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .job-box {
+      background: var(--bg-secondary);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+      border: 1px solid var(--border);
+    }
+
+    .job-box strong { color: var(--accent); }
+
+    /* Subtask Table */
+    .subtask-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+
+    .subtask-table th, .subtask-table td {
+      padding: 0.875rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .subtask-table th {
+      background: var(--bg-secondary);
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+    }
+
+    .subtask-table td { font-size: 0.9rem; }
+
+    .tag {
+      display: inline-block;
+      padding: 0.25rem 0.625rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .tag-deterministic { background: var(--success-soft); color: var(--success); }
+    .tag-ai-small { background: var(--warning-soft); color: var(--warning); }
+    .tag-ai-large { background: var(--accent-soft); color: var(--accent); }
+
+    /* Risk Box */
+    .risk-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--warning);
+      border-radius: 0 10px 10px 0;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .risk-title { font-weight: 600; margin-bottom: 0.5rem; color: var(--warning); }
+
+    /* Moat Grid */
+    .moat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+
+    .moat-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .moat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .moat-rating { font-weight: 700; font-size: 1.125rem; }
+    .moat-rating.strong { color: var(--success); }
+    .moat-rating.moderate { color: var(--warning); }
+    .moat-rating.weak { color: var(--danger); }
+
+    /* Decision Box */
+    .decision-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .decision-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .decision-icon.build { background: var(--accent-soft); }
+    .decision-icon.buy { background: var(--warning-soft); }
+    .decision-icon.integrate { background: var(--success-soft); }
+
+    .decision-text h4 { 
+      font-family: 'Fraunces', Georgia, serif; 
+      font-size: 1.25rem; 
+      margin-bottom: 0.25rem; 
+    }
+
+    /* Kill Factor */
+    .kill-factor {
+      background: var(--danger-soft);
+      border: 1px solid rgba(220, 38, 38, 0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .kill-factor h4 {
+      color: var(--danger);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Bottom Line */
+    .bottom-line { 
+      background: var(--gradient-1); 
+      border-radius: 16px; 
+      padding: 2rem; 
+      text-align: center; 
+      color: white;
+      box-shadow: var(--shadow-lg);
+    }
+    .verdict { 
+      font-family: 'Fraunces', Georgia, serif; 
+      font-size: 2rem; 
+      font-weight: 700; 
+      margin-bottom: 0.75rem; 
+    }
+    .verdict-rationale { font-size: 1.125rem; opacity: 0.9; }
+
+    /* Feedback Section */
+    .feedback-section {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .feedback-section h4 {
+      font-family: 'Fraunces', Georgia, serif;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .feedback-question {
+      margin-bottom: 1.25rem;
+    }
+
+    .feedback-question label {
+      font-weight: 500;
+      margin-bottom: 0.75rem;
+      display: block;
+      color: var(--text-primary);
+    }
+
+    .feedback-options {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .feedback-option {
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .feedback-option:hover {
+      border-color: var(--border-focus);
+      background: var(--bg-secondary);
+    }
+
+    .feedback-option.selected {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .feedback-notes {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.9rem;
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .feedback-notes:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    /* History Panel */
+    .history-panel { display: none; }
+    .history-panel.active { display: block; }
+
+    .history-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stat-value {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-value.positive { color: var(--success); }
+    .stat-value.negative { color: var(--danger); }
+    .stat-value.neutral { color: var(--accent); }
+
+    .stat-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .history-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .history-item:hover { 
+      border-color: var(--border-focus); 
+      box-shadow: var(--shadow-md);
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+    }
+
+    .history-title {
+      font-weight: 600;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .history-meta { font-size: 0.8rem; color: var(--text-muted); }
+    .history-preview { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.5; }
+
+    .history-feedback {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .history-feedback.positive { background: var(--success-soft); color: var(--success); }
+    .history-feedback.negative { background: var(--danger-soft); color: var(--danger); }
+    .history-feedback.pending { background: var(--bg-elevated); color: var(--text-muted); }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--text-muted);
+    }
+
+    .empty-state-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+
+    /* Detail Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 2rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+
+    .modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      max-width: 800px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 2rem;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-header h3 {
+      font-family: 'Fraunces', Georgia, serif;
+      color: var(--text-primary);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+
+    .modal-close:hover {
+      color: var(--text-primary);
+    }
+
+    .modal-section {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+    .modal-section h4 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .modal-section p, .modal-section pre {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .modal-section pre {
+      background: var(--bg-secondary);
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 0.8rem;
+      border: 1px solid var(--border);
+    }
+
+    /* Loading */
+    .loading { display: flex; align-items: center; justify-content: center; padding: 3rem; }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .hidden { display: none !important; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container { padding: 1rem; }
+      .header h1 { font-size: 1.75rem; }
+      .mode-selector { grid-template-columns: 1fr; }
+      .moat-grid { grid-template-columns: 1fr; }
+      .btn-group { flex-direction: column; }
+      .history-stats { grid-template-columns: repeat(2, 1fr); }
+      .comparison-table { font-size: 0.8rem; }
+      .comparison-table th, .comparison-table td { padding: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">⚡</div>
+        <span class="logo-text">AI Strategy</span>
+      </div>
+      <h1>AI Use Case Evaluator</h1>
+      <p>A structured thinking tool for PMs evaluating AI features before roadmap commitment</p>
+      <p class="credit">Framework by <a href="https://linkedin.com/in/nithyach" target="_blank">Nithya Chandrasekaran</a></p>
+    </header>
+
+    <!-- Info Expander -->
+    <div class="info-expander">
+      <button class="info-toggle" onclick="toggleInfo()">
+        <span>ℹ️</span>
+        <span>How is this different from asking Claude directly?</span>
+        <span class="info-toggle-icon" style="margin-left: auto;">▼</span>
+      </button>
+      <div class="info-content" id="info-content">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>What this tool does</th>
+              <th>What you'd get asking Claude directly</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Forces structured intake — you can't skip the hard questions about user, JTBD, and constraints</td>
+              <td>Claude doesn't know what to ask you first</td>
+            </tr>
+            <tr>
+              <td>Applies a consistent framework (JTBD, Moat, Kill Factor) across every use case</td>
+              <td>Structure varies based on how you prompt</td>
+            </tr>
+            <tr>
+              <td>Distinguishes AI-Augmented vs AI-Native and weights the evaluation accordingly</td>
+              <td>Claude treats all AI features the same</td>
+            </tr>
+            <tr>
+              <td>Explicitly surfaces the "Kill Factor" — the uncomfortable truth most teams skip</td>
+              <td>Claude tends toward helpful optimism</td>
+            </tr>
+            <tr>
+              <td>Designed by a PM for PMs — reflects real roadmap decisions</td>
+              <td>Generic output often misses enterprise nuance</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="info-footer">
+          <strong>Bottom line:</strong> Claude is the engine. This tool is the steering wheel.
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('evaluate')">✨ Evaluate</button>
+      <button class="tab" onclick="switchTab('history')">
+        📊 History
+        <span class="tab-badge" id="history-count">0</span>
+      </button>
+    </div>
+
+    <!-- Evaluate Tab -->
+    <div id="evaluate-tab">
+      <div class="progress-bar">
+        <div class="progress-dot active" id="dot-1">1</div>
+        <div class="progress-line" id="line-1"></div>
+        <div class="progress-dot" id="dot-2">2</div>
+        <div class="progress-line" id="line-2"></div>
+        <div class="progress-dot" id="dot-3">3</div>
+      </div>
+
+      <!-- Step 1: Context -->
+      <div id="step-1" class="step">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">👤</div>
+            <div>
+              <h2 class="card-title">User & Task Context</h2>
+              <p class="card-subtitle">The more specific you are, the sharper the evaluation</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Who's the user, and what's the specific task?</label>
+            <p class="label-hint">e.g., "Procurement managers who cross-reference three spreadsheets every Monday to flag late purchase orders"</p>
+            <textarea id="user-task" placeholder="Describe the user and the specific task they're trying to accomplish..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>What do they use today, and what's broken about it?</label>
+            <p class="label-hint">e.g., "Excel + email chains. Takes 2–3 hours, misses things, no real-time view"</p>
+            <textarea id="current-solution" placeholder="Describe the current approach and its pain points..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>What does success look like after the AI feature exists?</label>
+            <p class="label-hint">e.g., "Walk into Monday's planning meeting already knowing which POs need intervention — no prep work"</p>
+            <textarea id="success-state" placeholder="Describe the ideal end state..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Any constraints worth knowing? (optional)</label>
+            <p class="label-hint">e.g., "Enterprise customers, SAP integration required, strong compliance environment"</p>
+            <textarea id="constraints" placeholder="Technical constraints, compliance requirements, integration needs..."></textarea>
+          </div>
+
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="goToStep(2)">Continue →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Mode Selection -->
+      <div id="step-2" class="step hidden">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">🎯</div>
+            <div>
+              <h2 class="card-title">Is this AI-Augmented or AI-Native?</h2>
+              <p class="card-subtitle">This shapes the entire evaluation</p>
+            </div>
+          </div>
+
+          <div class="mode-selector">
+            <label class="mode-card" id="mode-augmented">
+              <input type="radio" name="mode" value="augmented">
+              <span class="mode-badge">AI-Augmented</span>
+              <h3>AI added to an existing job</h3>
+              <p>The product works without it — AI makes it faster, easier, or smarter. Users have an existing workflow.</p>
+              <div class="mode-example">Example: AI-generated forecast explanation added to an existing supply chain dashboard</div>
+            </label>
+
+            <label class="mode-card" id="mode-native">
+              <input type="radio" name="mode" value="native">
+              <span class="mode-badge">AI-Native</span>
+              <h3>AI is the product</h3>
+              <p>There's no "remove the AI layer." The capability itself is new. Users need to form new habits.</p>
+              <div class="mode-example">Example: A clinical risk model that is the product — there's no dashboard without it</div>
+            </label>
+          </div>
+
+          <div class="btn-group">
+            <button class="btn btn-secondary" onclick="goToStep(1)">← Back</button>
+            <button class="btn btn-primary" onclick="runEvaluation()" id="evaluate-btn" disabled>Run Evaluation →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Results -->
+      <div id="step-3" class="step hidden">
+        <div class="loading" id="loading">
+          <div class="spinner"></div>
+        </div>
+
+        <div class="results-container" id="results"></div>
+
+        <!-- Feedback Section -->
+        <div class="feedback-section hidden" id="feedback-section">
+          <h4>📝 Help improve this tool</h4>
+          
+          <div class="feedback-question">
+            <label>Did this evaluation surface something you hadn't considered?</label>
+            <div class="feedback-options" data-field="surfacedNew">
+              <div class="feedback-option" data-value="yes">Yes</div>
+              <div class="feedback-option" data-value="no">No</div>
+              <div class="feedback-option" data-value="not_sure">Not sure</div>
+            </div>
+          </div>
+
+          <div class="feedback-question">
+            <label>Was the "Kill Factor" useful or uncomfortable in a good way?</label>
+            <div class="feedback-options" data-field="killFactorUseful">
+              <div class="feedback-option" data-value="useful">Useful</div>
+              <div class="feedback-option" data-value="not_useful">Not useful</div>
+              <div class="feedback-option" data-value="too_generic">Too generic</div>
+            </div>
+          </div>
+
+          <div class="feedback-question">
+            <label>Would you share this output with your team or leadership?</label>
+            <div class="feedback-options" data-field="wouldShare">
+              <div class="feedback-option" data-value="yes_as_is">Yes, as-is</div>
+              <div class="feedback-option" data-value="yes_with_edits">Yes, with edits</div>
+              <div class="feedback-option" data-value="no">No</div>
+            </div>
+          </div>
+
+          <div class="feedback-question">
+            <label>What's one thing that would make this more useful? (optional)</label>
+            <textarea class="feedback-notes" id="feedback-notes" placeholder="Your suggestion..."></textarea>
+          </div>
+
+          <div class="btn-group">
+            <button class="btn btn-secondary" onclick="skipFeedback()">Skip</button>
+            <button class="btn btn-primary" onclick="saveFeedback()">Submit & Continue</button>
+          </div>
+        </div>
+
+        <!-- Export Options (shown after feedback) -->
+        <div class="btn-group hidden" id="export-section">
+          <button class="btn btn-secondary" onclick="resetForm()">← New Evaluation</button>
+          <button class="btn btn-secondary" onclick="exportUserEval()">📥 Download Evaluation</button>
+          <button class="btn btn-secondary" onclick="exportAdminSession()" title="Contains full use case description. For internal debugging only.">🔧 Export Full Session (Admin)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- History Tab -->
+    <div id="history-tab" class="history-panel">
+      <div class="history-stats" id="history-stats">
+        <div class="stat-card">
+          <div class="stat-value neutral" id="stat-total">0</div>
+          <div class="stat-label">Total</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value positive" id="stat-positive">0</div>
+          <div class="stat-label">👍 Useful</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value negative" id="stat-negative">0</div>
+          <div class="stat-label">👎 Not Useful</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value neutral" id="stat-pending">0</div>
+          <div class="stat-label">⏳ Pending</div>
+        </div>
+      </div>
+
+      <div class="btn-group" style="margin-bottom: 1.5rem;">
+        <button class="btn btn-primary" onclick="exportUserFeedbackCSV()">📥 Export Feedback (CSV)</button>
+        <button class="btn btn-secondary" onclick="exportAllAdminJSON()">🔧 Export All Sessions (Admin)</button>
+        <button class="btn btn-danger" onclick="clearHistory()">🗑️ Clear All</button>
+      </div>
+
+      <div id="history-list"></div>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 id="modal-title">Evaluation Details</h3>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <script>
+    // State
+    let selectedMode = null;
+    let currentEvaluation = null;
+    let currentFeedback = { surfacedNew: null, killFactorUseful: null, wouldShare: null };
+    let history = [];
+
+    // Info toggle
+    function toggleInfo() {
+      const toggle = document.querySelector('.info-toggle');
+      const content = document.getElementById('info-content');
+      toggle.classList.toggle('open');
+      content.classList.toggle('open');
+    }
+
+    // Load history
+    function loadHistory() {
+      try {
+        const saved = localStorage.getItem('ai-strategy-evaluator-history');
+        if (saved) {
+          history = JSON.parse(saved);
+          updateHistoryUI();
+        }
+      } catch (e) {
+        console.log('No saved history');
+      }
+    }
+
+    function saveHistory() {
+      localStorage.setItem('ai-strategy-evaluator-history', JSON.stringify(history));
+      updateHistoryUI();
+    }
+
+    function updateHistoryUI() {
+      document.getElementById('history-count').textContent = history.length;
+      
+      const total = history.length;
+      const positive = history.filter(h => h.feedback?.rating === 'positive').length;
+      const negative = history.filter(h => h.feedback?.rating === 'negative').length;
+      const pending = history.filter(h => !h.feedback?.rating).length;
+
+      document.getElementById('stat-total').textContent = total;
+      document.getElementById('stat-positive').textContent = positive;
+      document.getElementById('stat-negative').textContent = negative;
+      document.getElementById('stat-pending').textContent = pending;
+
+      const listEl = document.getElementById('history-list');
+      
+      if (history.length === 0) {
+        listEl.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📋</div>
+            <p>No evaluations yet. Run your first evaluation to start building history.</p>
+          </div>
+        `;
+        return;
+      }
+
+      listEl.innerHTML = history.slice().reverse().map((item, idx) => {
+        const realIdx = history.length - 1 - idx;
+        const feedbackClass = item.feedback?.rating || 'pending';
+        const feedbackLabel = item.feedback?.rating === 'positive' ? '👍 Useful' : 
+                             item.feedback?.rating === 'negative' ? '👎 Not Useful' : '⏳ Pending';
+        const date = new Date(item.timestamp).toLocaleDateString('en-US', {
+          month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+        
+        return `
+          <div class="history-item" onclick="showDetail(${realIdx})">
+            <div class="history-header">
+              <div class="history-title">
+                <span>${item.inputs.mode === 'augmented' ? '🔧' : '🚀'}</span>
+                ${item.evaluation?.bottomLine?.verdict?.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Evaluation'}
+              </div>
+              <span class="history-feedback ${feedbackClass}">${feedbackLabel}</span>
+            </div>
+            <div class="history-preview">${item.inputs.userTask.substring(0, 120)}${item.inputs.userTask.length > 120 ? '...' : ''}</div>
+            <div class="history-meta">${date}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Tab switching
+    function switchTab(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active');
+      
+      document.getElementById('evaluate-tab').style.display = tab === 'evaluate' ? 'block' : 'none';
+      document.getElementById('history-tab').classList.toggle('active', tab === 'history');
+    }
+
+    // Mode selection
+    document.querySelectorAll('.mode-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        card.querySelector('input').checked = true;
+        selectedMode = card.querySelector('input').value;
+        document.getElementById('evaluate-btn').disabled = false;
+      });
+    });
+
+    // Feedback options
+    document.querySelectorAll('.feedback-option').forEach(option => {
+      option.addEventListener('click', () => {
+        const parent = option.parentElement;
+        const field = parent.dataset.field;
+        const value = option.dataset.value;
+        
+        parent.querySelectorAll('.feedback-option').forEach(o => o.classList.remove('selected'));
+        option.classList.add('selected');
+        currentFeedback[field] = value;
+      });
+    });
+
+    function goToStep(step) {
+      document.querySelectorAll('.step').forEach(s => s.classList.add('hidden'));
+      document.getElementById(`step-${step}`).classList.remove('hidden');
+      
+      for (let i = 1; i <= 3; i++) {
+        const dot = document.getElementById(`dot-${i}`);
+        const line = document.getElementById(`line-${i}`);
+        
+        dot.classList.remove('active', 'completed');
+        if (i < step) {
+          dot.classList.add('completed');
+          dot.innerHTML = '✓';
+        } else if (i === step) {
+          dot.classList.add('active');
+          dot.innerHTML = i;
+        } else {
+          dot.innerHTML = i;
+        }
+        
+        if (line) line.classList.toggle('completed', i < step);
+      }
+    }
+
+    async function runEvaluation() {
+      goToStep(3);
+      
+      const inputs = {
+        userTask: document.getElementById('user-task').value,
+        currentSolution: document.getElementById('current-solution').value,
+        successState: document.getElementById('success-state').value,
+        constraints: document.getElementById('constraints').value,
+        mode: selectedMode
+      };
+      
+      const modeContext = selectedMode === 'augmented' 
+        ? "This is AI-Augmented: AI added to an existing job. Weight activation path and habit change heavily. Kill factor is almost always adoption friction."
+        : "This is AI-Native: AI is the product. Weight output trust and outcome quality heavily. Kill factor is almost always trust threshold or 'good enough' bar not met.";
+
+      const prompt = `You are an AI Product Strategy evaluator. Analyze this AI use case.
+
+Context:
+- User & Task: ${inputs.userTask}
+- Current Solution: ${inputs.currentSolution}
+- Success State: ${inputs.successState}
+- Constraints: ${inputs.constraints || 'None specified'}
+- Mode: ${selectedMode === 'augmented' ? 'AI-Augmented' : 'AI-Native'}
+
+${modeContext}
+
+Key risks to check: step count (>5 = flag), persona split, trust gap, compliance surface, action gap.
+If most sub-tasks are deterministic, recommend removing AI entirely.
+Kill factor must be specific. If fixable, say how.
+
+Respond ONLY with valid JSON:
+{
+  "functionalJob": "string",
+  "emotionalJob": "string",
+  "subtasks": [{"task": "string", "type": "deterministic|ai-small|ai-large", "why": "string"}],
+  "risks": [{"title": "string", "description": "string"}],
+  "moat": {"data": "strong|moderate|weak", "workflow": "strong|moderate|weak", "governance": "strong|moderate|weak", "summary": "string"},
+  "buildBuyIntegrate": {"recommendation": "build|buy|integrate|none", "rationale": "string"},
+  "killFactor": {"insight": "string (15-40 words)", "fixable": true/false, "howToFix": "string or null"},
+  "bottomLine": {"verdict": "pursue|pursue-with-conditions|pass", "condition": "string"},
+  "nextStep": "string (fastest validation in <2 weeks)"
+}`;
+
+      try {
+        const response = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: "claude-sonnet-4-20250514",
+            max_tokens: 1200,
+            messages: [{ role: "user", content: prompt }],
+          })
+        });
+
+        const data = await response.json();
+        const textContent = data.content.find(c => c.type === 'text');
+        const resultText = textContent ? textContent.text : '';
+        
+        const cleanJson = resultText.replace(/```json|```/g, '').trim();
+        const evaluation = JSON.parse(cleanJson);
+        
+        currentEvaluation = {
+          timestamp: new Date().toISOString(),
+          inputs: inputs,
+          prompt: prompt,
+          rawResponse: resultText,
+          evaluation: evaluation,
+          feedback: null
+        };
+        
+        renderResults(evaluation);
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('loading').innerHTML = `
+          <div style="text-align: center; color: var(--danger);">
+            <p style="margin-bottom: 1rem;">Something went wrong. Please try again.</p>
+            <button class="btn btn-secondary" onclick="goToStep(2)">← Go Back</button>
+          </div>
+        `;
+      }
+    }
+
+    function renderResults(eval) {
+      document.getElementById('loading').classList.add('hidden');
+      
+      const typeLabels = {
+        'deterministic': '<span class="tag tag-deterministic">Deterministic</span>',
+        'ai-small': '<span class="tag tag-ai-small">AI — Small Model</span>',
+        'ai-large': '<span class="tag tag-ai-large">AI — Large Model</span>'
+      };
+      
+      const verdictLabels = {
+        'pursue': '✓ Pursue',
+        'pursue-with-conditions': '⚠ Pursue with Conditions',
+        'pass': '✗ Pass'
+      };
+      
+      const decisionIcons = { 'build': '🔨', 'buy': '🛒', 'integrate': '🔗' };
+
+      document.getElementById('results').innerHTML = `
+        <div class="result-section">
+          <h3><span class="section-number">1</span> Jobs-to-Be-Done</h3>
+          <div class="job-box"><strong>Functional:</strong> ${eval.functionalJob}</div>
+          <div class="job-box"><strong>Emotional:</strong> ${eval.emotionalJob}</div>
+          <table class="subtask-table">
+            <thead><tr><th>Sub-task</th><th>Type</th><th>Why</th></tr></thead>
+            <tbody>
+              ${eval.subtasks.map(s => `
+                <tr>
+                  <td>${s.task}</td>
+                  <td>${typeLabels[s.type] || s.type}</td>
+                  <td>${s.why || s.notes}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="result-section">
+          <h3><span class="section-number">2</span> Activation & Adoption Risk</h3>
+          ${eval.risks.map(r => `
+            <div class="risk-box">
+              <div class="risk-title">⚠️ ${r.title}</div>
+              <p>${r.description}</p>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="result-section">
+          <h3><span class="section-number">3</span> Moat Assessment</h3>
+          <div class="moat-grid">
+            <div class="moat-item">
+              <div class="moat-label">Data</div>
+              <div class="moat-rating ${eval.moat.data}">${eval.moat.data.charAt(0).toUpperCase() + eval.moat.data.slice(1)}</div>
+            </div>
+            <div class="moat-item">
+              <div class="moat-label">Workflow</div>
+              <div class="moat-rating ${eval.moat.workflow}">${eval.moat.workflow.charAt(0).toUpperCase() + eval.moat.workflow.slice(1)}</div>
+            </div>
+            <div class="moat-item">
+              <div class="moat-label">Governance</div>
+              <div class="moat-rating ${eval.moat.governance}">${eval.moat.governance.charAt(0).toUpperCase() + eval.moat.governance.slice(1)}</div>
+            </div>
+          </div>
+          <p style="margin-top: 1rem; color: var(--text-secondary); font-size: 0.9rem;">${eval.moat.summary}</p>
+        </div>
+
+        <div class="result-section">
+          <h3><span class="section-number">4</span> Build vs. Buy vs. Integrate</h3>
+          <div class="decision-box">
+            <div class="decision-icon ${eval.buildBuyIntegrate.recommendation}">${decisionIcons[eval.buildBuyIntegrate.recommendation]}</div>
+            <div class="decision-text">
+              <h4>${eval.buildBuyIntegrate.recommendation.charAt(0).toUpperCase() + eval.buildBuyIntegrate.recommendation.slice(1)}</h4>
+              <p style="color: var(--text-secondary);">${eval.buildBuyIntegrate.rationale}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-section">
+          <h3><span class="section-number">5</span> Kill Factor</h3>
+          <div class="kill-factor">
+            <h4>💀 The most likely reason this fails</h4>
+            <p>${eval.killFactor.insight || eval.killFactor}</p>
+            ${eval.killFactor.fixable ? `<p style="margin-top: 0.75rem; color: var(--success);"><strong>Fixable:</strong> ${eval.killFactor.howToFix}</p>` : (eval.killFactor.howToFix === null ? '' : '')}
+          </div>
+        </div>
+
+        <div class="result-section">
+          <h3><span class="section-number">6</span> Bottom Line</h3>
+          <div class="bottom-line">
+            <div class="verdict">${verdictLabels[eval.bottomLine.verdict] || eval.bottomLine.verdict}</div>
+            <p class="verdict-rationale">${eval.bottomLine.condition || eval.bottomLine.rationale}</p>
+          </div>
+        </div>
+
+        <div class="result-section">
+          <h3><span class="section-number">7</span> Next Step</h3>
+          <div class="job-box" style="border-left: 3px solid var(--accent);">
+            <strong>Fastest validation in &lt;2 weeks:</strong><br>
+            ${eval.nextStep || 'Interview 5 target users with a mock AI output generated from their real data.'}
+          </div>
+        </div>
+      `;
+
+      document.getElementById('results').classList.add('active');
+      document.getElementById('feedback-section').classList.remove('hidden');
+    }
+
+    function saveFeedback() {
+      if (currentEvaluation) {
+        // Determine overall rating based on responses
+        const isPositive = currentFeedback.surfacedNew === 'yes' || 
+                          currentFeedback.killFactorUseful === 'useful' ||
+                          currentFeedback.wouldShare === 'yes_as_is';
+        
+        currentEvaluation.feedback = {
+          rating: isPositive ? 'positive' : (currentFeedback.killFactorUseful === 'too_generic' || currentFeedback.wouldShare === 'no' ? 'negative' : null),
+          surfacedNew: currentFeedback.surfacedNew,
+          killFactorUseful: currentFeedback.killFactorUseful,
+          wouldShare: currentFeedback.wouldShare,
+          notes: document.getElementById('feedback-notes').value
+        };
+        
+        history.push(currentEvaluation);
+        saveHistory();
+      }
+      
+      document.getElementById('feedback-section').classList.add('hidden');
+      document.getElementById('export-section').classList.remove('hidden');
+    }
+
+    function skipFeedback() {
+      if (currentEvaluation) {
+        history.push(currentEvaluation);
+        saveHistory();
+      }
+      document.getElementById('feedback-section').classList.add('hidden');
+      document.getElementById('export-section').classList.remove('hidden');
+    }
+
+    function resetForm() {
+      document.getElementById('user-task').value = '';
+      document.getElementById('current-solution').value = '';
+      document.getElementById('success-state').value = '';
+      document.getElementById('constraints').value = '';
+      document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
+      document.querySelectorAll('.feedback-option').forEach(o => o.classList.remove('selected'));
+      document.getElementById('evaluate-btn').disabled = true;
+      document.getElementById('feedback-notes').value = '';
+      selectedMode = null;
+      currentEvaluation = null;
+      currentFeedback = { surfacedNew: null, killFactorUseful: null, wouldShare: null };
+      
+      document.getElementById('loading').classList.remove('hidden');
+      document.getElementById('loading').innerHTML = '<div class="spinner"></div>';
+      document.getElementById('results').innerHTML = '';
+      document.getElementById('results').classList.remove('active');
+      document.getElementById('feedback-section').classList.add('hidden');
+      document.getElementById('export-section').classList.add('hidden');
+      
+      goToStep(1);
+    }
+
+    // Export functions
+    function exportUserEval() {
+      if (!currentEvaluation) return;
+      
+      const e = currentEvaluation.evaluation;
+      const md = `# AI Strategy Evaluation
+Generated: ${new Date(currentEvaluation.timestamp).toLocaleDateString()}
+
+## Jobs-to-Be-Done
+**Functional:** ${e.functionalJob}
+**Emotional:** ${e.emotionalJob}
+
+### Sub-tasks
+| Task | Type | Notes |
+|---|---|---|
+${e.subtasks.map(s => `| ${s.task} | ${s.type} | ${s.notes} |`).join('\n')}
+
+## Activation & Adoption Risk
+${e.risks.map(r => `**${r.title}:** ${r.description}`).join('\n\n')}
+
+## Moat Assessment
+- **Data:** ${e.moat.data}
+- **Workflow:** ${e.moat.workflow}
+- **Governance:** ${e.moat.governance}
+
+${e.moat.summary}
+
+## Build vs. Buy vs. Integrate
+**${e.buildBuyIntegrate.recommendation.toUpperCase()}** — ${e.buildBuyIntegrate.rationale}
+
+## Kill Factor
+${e.killFactor}
+
+## Bottom Line
+**${e.bottomLine.verdict.toUpperCase()}**
+${e.bottomLine.rationale}
+
+---
+*Generated by AI Strategy Evaluator — Framework by Nithya Chandrasekaran*`;
+
+      downloadFile(md, `ai-strategy-eval-${Date.now()}.md`, 'text/markdown');
+    }
+
+    function exportAdminSession() {
+      if (!currentEvaluation) return;
+      downloadFile(JSON.stringify(currentEvaluation, null, 2), `admin-session-${Date.now()}.json`, 'application/json');
+    }
+
+    function exportUserFeedbackCSV() {
+      const headers = ['session_id', 'timestamp', 'mode', 'verdict', 'surfaced_new', 'kill_factor_useful', 'would_share', 'notes'];
+      const rows = history.map((h, i) => [
+        `session_${i}`,
+        h.timestamp,
+        h.inputs.mode,
+        h.evaluation?.bottomLine?.verdict || '',
+        h.feedback?.surfacedNew || '',
+        h.feedback?.killFactorUseful || '',
+        h.feedback?.wouldShare || '',
+        `"${(h.feedback?.notes || '').replace(/"/g, '""')}"`
+      ]);
+      
+      const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      downloadFile(csv, `feedback-export-${Date.now()}.csv`, 'text/csv');
+    }
+
+    function exportAllAdminJSON() {
+      downloadFile(JSON.stringify(history, null, 2), `all-sessions-${Date.now()}.json`, 'application/json');
+    }
+
+    function downloadFile(content, filename, type) {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function clearHistory() {
+      if (confirm('Delete all evaluation history? This cannot be undone.')) {
+        history = [];
+        saveHistory();
+      }
+    }
+
+    function showDetail(index) {
+      const item = history[index];
+      if (!item) return;
+
+      document.getElementById('modal-title').textContent = `Evaluation — ${new Date(item.timestamp).toLocaleDateString()}`;
+      document.getElementById('modal-content').innerHTML = `
+        <div class="modal-section">
+          <h4>Inputs</h4>
+          <p><strong>User & Task:</strong> ${item.inputs.userTask}</p>
+          <p><strong>Current Solution:</strong> ${item.inputs.currentSolution}</p>
+          <p><strong>Success State:</strong> ${item.inputs.successState}</p>
+          <p><strong>Constraints:</strong> ${item.inputs.constraints || 'None'}</p>
+          <p><strong>Mode:</strong> ${item.inputs.mode === 'augmented' ? 'AI-Augmented' : 'AI-Native'}</p>
+        </div>
+        <div class="modal-section">
+          <h4>Evaluation Output</h4>
+          <pre>${JSON.stringify(item.evaluation, null, 2)}</pre>
+        </div>
+        <div class="modal-section">
+          <h4>Feedback</h4>
+          <p><strong>Surfaced new insight:</strong> ${item.feedback?.surfacedNew || 'Not provided'}</p>
+          <p><strong>Kill Factor useful:</strong> ${item.feedback?.killFactorUseful || 'Not provided'}</p>
+          <p><strong>Would share:</strong> ${item.feedback?.wouldShare || 'Not provided'}</p>
+          <p><strong>Notes:</strong> ${item.feedback?.notes || 'None'}</p>
+        </div>
+      `;
+      document.getElementById('modal-overlay').classList.add('active');
+    }
+
+    function closeModal(event) {
+      if (!event || event.target === document.getElementById('modal-overlay')) {
+        document.getElementById('modal-overlay').classList.remove('active');
+      }
+    }
+
+    // Init
+    loadHistory();
+  </script>
+</body>
+</html>
